@@ -7,16 +7,19 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 class ConstraintValidationExceptionTest extends TestCase
 {
-
-    public function testException()
+    public function testException(): void
     {
-        $exception = new ConstraintViolationException(new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue', null, 'myCode'));
+        $exception = new ConstraintViolationException(
+            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue', null, 'myCode')
+        );
         $this->assertSame(400, $exception->getCode());
         $this->assertTrue($exception->isClientSafe());
         $this->assertSame('Validate', $exception->getCategory());
         $this->assertSame(['code' => 'myCode'], $exception->getExtensions());
 
-        $exception = new ConstraintViolationException(new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue'));
+        $exception = new ConstraintViolationException(
+            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue')
+        );
         $this->assertSame([], $exception->getExtensions());
     }
 }

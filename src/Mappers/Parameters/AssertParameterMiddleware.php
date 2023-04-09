@@ -7,6 +7,7 @@ namespace TheCodingMachine\GraphQLite\Validator\Mappers\Parameters;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\Type;
 use ReflectionParameter;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,7 +17,6 @@ use TheCodingMachine\GraphQLite\Mappers\Parameters\ParameterMiddlewareInterface;
 use TheCodingMachine\GraphQLite\Parameters\InputTypeParameterInterface;
 use TheCodingMachine\GraphQLite\Parameters\ParameterInterface;
 use TheCodingMachine\GraphQLite\Validator\Annotations\Assertion;
-
 use function array_map;
 use function array_merge;
 
@@ -25,22 +25,23 @@ use function array_merge;
  */
 class AssertParameterMiddleware implements ParameterMiddlewareInterface
 {
-    /** @var ConstraintValidatorFactoryInterface */
-    private $constraintValidatorFactory;
-    /** @var ValidatorInterface */
-    private $validator;
-    /** @var TranslatorInterface */
-    private $translator;
-
-    public function __construct(ConstraintValidatorFactoryInterface $constraintValidatorFactory, ValidatorInterface $validator, TranslatorInterface $translator)
-    {
-        $this->constraintValidatorFactory = $constraintValidatorFactory;
-        $this->validator = $validator;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly ConstraintValidatorFactoryInterface $constraintValidatorFactory,
+        private readonly ValidatorInterface                  $validator,
+        private readonly TranslatorInterface                 $translator
+    ) {
     }
 
-    public function mapParameter(ReflectionParameter $refParameter, DocBlock $docBlock, ?Type $paramTagType, ParameterAnnotations $parameterAnnotations, ParameterHandlerInterface $next): ParameterInterface
-    {
+    /**
+     * @throws InvalidAssertionAnnotationException
+     */
+    public function mapParameter(
+        ReflectionParameter       $refParameter,
+        DocBlock                  $docBlock,
+        ?Type                     $paramTagType,
+        ParameterAnnotations      $parameterAnnotations,
+        ParameterHandlerInterface $next
+    ): ParameterInterface {
         /** @var Assertion[] $assertionAnnotations */
         $assertionAnnotations = $parameterAnnotations->getAnnotationsByType(Assertion::class);
 
@@ -50,16 +51,25 @@ class AssertParameterMiddleware implements ParameterMiddlewareInterface
             return $parameter;
         }
 
-        if (! $parameter instanceof InputTypeParameterInterface) {
+        if (!$parameter instanceof InputTypeParameterInterface) {
             throw InvalidAssertionAnnotationException::canOnlyValidateInputType($refParameter);
         }
 
         // Let's wrap the ParameterInterface into a ParameterValidator.
-        $recursiveConstraints = array_map(static function (Assertion $assertAnnotation) {
-            return $assertAnnotation->getConstraint();
-        }, $assertionAnnotations);
+        /** @var Constraint[] $recursiveConstraints */
+        $recursiveConstraints = array_map(
+            static fn(Assertion $assertAnnotation): array => $assertAnnotation->getConstraint(),
+            $assertionAnnotations
+        );
         $constraints = array_merge(...$recursiveConstraints);
 
-        return new ParameterValidator($parameter, $refParameter->getName(), $constraints, $this->constraintValidatorFactory, $this->validator, $this->translator);
+        return new ParameterValidator(
+            $parameter,
+            $refParameter->getName(),
+            $constraints,
+            $this->constraintValidatorFactory,
+            $this->validator,
+            $this->translator
+        );
     }
 }

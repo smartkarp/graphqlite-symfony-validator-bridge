@@ -10,21 +10,10 @@ use TheCodingMachine\GraphQLite\Exceptions\GraphQLExceptionInterface;
 
 class ConstraintViolationException extends Exception implements GraphQLExceptionInterface
 {
-    /** @var ConstraintViolationInterface */
-    private $violation;
-
-    public function __construct(ConstraintViolationInterface $violation)
-    {
+    public function __construct(
+        private readonly ConstraintViolationInterface $violation
+    ) {
         parent::__construct((string) $violation->getMessage(), 400);
-        $this->violation = $violation;
-    }
-
-    /**
-     * Returns true when exception message is safe to be displayed to a client.
-     */
-    public function isClientSafe(): bool
-    {
-        return true;
     }
 
     /**
@@ -39,22 +28,30 @@ class ConstraintViolationException extends Exception implements GraphQLException
 
     /**
      * Returns the "extensions" object attached to the GraphQL error.
-     *
-     * @return array<string, mixed>
      */
     public function getExtensions(): array
     {
         $extensions = [];
         $code = $this->violation->getCode();
-        if (! empty($code)) {
+
+        if (!empty($code)) {
             $extensions['code'] = $code;
         }
 
         $propertyPath = $this->violation->getPropertyPath();
-        if (! empty($propertyPath)) {
+
+        if (!empty($propertyPath)) {
             $extensions['field'] = $propertyPath;
         }
 
         return $extensions;
+    }
+
+    /**
+     * Returns true when exception message is safe to be displayed to a client.
+     */
+    public function isClientSafe(): bool
+    {
+        return true;
     }
 }

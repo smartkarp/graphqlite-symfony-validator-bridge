@@ -1,24 +1,25 @@
 {
-  "name" : "thecodingmachine/graphqlite-symfony-validator-bridge",
-  "description" : "A bridge to use Symfony validator with GraphQLite.",
-  "keywords" : [
+  "name": "thecodingmachine/graphqlite-symfony-validator-bridge",
+  "description": "A bridge to use Symfony validator with GraphQLite.",
+  "keywords": [
     "graphql",
     "graphqlite",
     "validator",
     "symfony"
   ],
-  "homepage" : "https://graphqlite.thecodingmachine.io/",
-  "type" : "library",
-  "license" : "MIT",
-  "authors" : [{
-    "name" : "David Négrier",
-    "email" : "d.negrier@thecodingmachine.com",
-    "homepage" : "http://mouf-php.com"
-  }
+  "homepage": "https://graphqlite.thecodingmachine.io/",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Négrier",
+      "email": "d.negrier@thecodingmachine.com",
+      "homepage": "http://mouf-php.com"
+    }
   ],
-  "require" : {
-    "php" : ">=7.2",
-    "thecodingmachine/graphqlite" : "^6.1",
+  "require": {
+    "php": "^8.1",
+    "thecodingmachine/graphqlite": "^6.1",
     "symfony/validator": "^4.2 | ^5 | ^6",
     "doctrine/annotations": "^2.0"
   },
@@ -34,16 +35,20 @@
     "phpstan": "phpstan analyse src/ -c phpstan.neon --level=7 --no-progress",
     "cs-check": "phpcs",
     "cs-fix": "phpcbf",
-    "test": ["@cs-check", "@phpstan", "phpunit"]
+    "test": [
+      "@cs-check",
+      "@phpstan",
+      "phpunit"
+    ]
   },
-  "autoload" : {
-    "psr-4" : {
-      "TheCodingMachine\\GraphQLite\\Validator\\" : "src/"
+  "autoload": {
+    "psr-4": {
+      "TheCodingMachine\\GraphQLite\\Validator\\": "src/"
     }
   },
-  "autoload-dev" : {
-    "psr-4" : {
-      "TheCodingMachine\\GraphQLite\\Validator\\" : "tests/"
+  "autoload-dev": {
+    "psr-4": {
+      "TheCodingMachine\\GraphQLite\\Validator\\": "tests/"
     }
   },
   "extra": {

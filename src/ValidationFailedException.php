@@ -14,14 +14,14 @@ use Throwable;
 class ValidationFailedException extends InvalidArgumentException implements GraphQLAggregateExceptionInterface
 {
     /** @var ConstraintViolationException[] */
-    private $exceptions = [];
+    private array $exceptions = [];
 
     /**
      * @param ConstraintViolationListInterface<ConstraintViolationInterface> $constraintViolationList
      */
-    public function __construct(ConstraintViolationListInterface $constraintViolationList)
-    {
+    public function __construct(ConstraintViolationListInterface $constraintViolationList){
         parent::__construct('Validation failed:', 400);
+
         foreach ($constraintViolationList as $constraintViolation) {
             $this->add($constraintViolation);
         }
@@ -43,7 +43,7 @@ class ValidationFailedException extends InvalidArgumentException implements Grap
 
     public function hasExceptions(): bool
     {
-        return ! empty($this->exceptions);
+        return !empty($this->exceptions);
     }
 
     /**

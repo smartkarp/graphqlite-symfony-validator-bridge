@@ -1,24 +1,20 @@
 <?php
 
-
 namespace TheCodingMachine\GraphQLite\Validator\Fixtures\Controllers;
-
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;
 use TheCodingMachine\GraphQLite\Annotations\Query;
-use TheCodingMachine\GraphQLite\Validator\Fixtures\Types\User;
 use TheCodingMachine\GraphQLite\Validator\Annotations\Assertion;
+use TheCodingMachine\GraphQLite\Validator\Fixtures\Types\User;
 use TheCodingMachine\GraphQLite\Validator\ValidationFailedException;
 
 class UserController
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
+    public function __construct(
+        private readonly ValidatorInterface $validator
+    ) {
     }
 
     /**
@@ -44,7 +40,6 @@ class UserController
      */
     public function findByMail(string $email = 'a@a.com'): User
     {
-        $user = new User($email, 'foo');
-        return $user;
+        return new User($email, 'foo');
     }
 }

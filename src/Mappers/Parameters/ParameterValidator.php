@@ -6,7 +6,7 @@ namespace TheCodingMachine\GraphQLite\Validator\Mappers\Parameters;
 
 use GraphQL\Type\Definition\InputType;
 use GraphQL\Type\Definition\ResolveInfo;
-use Symfony\Component\Validator\Constraint;
+use GraphQL\Type\Definition\Type;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -16,39 +16,32 @@ use TheCodingMachine\GraphQLite\Validator\ValidationFailedException;
 
 class ParameterValidator implements InputTypeParameterInterface
 {
-    /** @var InputTypeParameterInterface */
-    private $parameter;
-    /** @var string */
-    private $parameterName;
-    /** @var array|Constraint[] */
-    private $constraints;
-    /** @var ConstraintValidatorFactoryInterface */
-    private $constraintValidatorFactory;
-    /** @var ValidatorInterface */
-    private $validator;
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /**
-     * @param Constraint[] $constraints
-     */
-    public function __construct(InputTypeParameterInterface $parameter, string $parameterName, array $constraints, ConstraintValidatorFactoryInterface $constraintValidatorFactory, ValidatorInterface $validator, TranslatorInterface $translator)
-    {
-        $this->parameter = $parameter;
-        $this->parameterName = $parameterName;
-        $this->constraints = $constraints;
-        $this->constraintValidatorFactory = $constraintValidatorFactory;
-        $this->validator = $validator;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly InputTypeParameterInterface         $parameter,
+        private readonly string                              $parameterName,
+        private readonly array                               $constraints,
+        private readonly ConstraintValidatorFactoryInterface $constraintValidatorFactory,
+        private readonly ValidatorInterface                  $validator,
+        private readonly TranslatorInterface                 $translator
+    ) {
     }
 
-    /**
-     * @param array<string, mixed> $args
-     * @param mixed $context
-     *
-     * @return mixed
-     */
-    public function resolve(?object $source, array $args, $context, ResolveInfo $info)
+    public function getDefaultValue(): mixed
+    {
+        return $this->parameter->getDefaultValue();
+    }
+
+    public function getType(): InputType&Type
+    {
+        return $this->parameter->getType();
+    }
+
+    public function hasDefaultValue(): bool
+    {
+        return $this->parameter->hasDefaultValue();
+    }
+
+    public function resolve(?object $source, array $args, mixed $context, ResolveInfo $info): mixed
     {
         $value = $this->parameter->resolve($source, $args, $context, $info);
 
@@ -67,23 +60,5 @@ class ParameterValidator implements InputTypeParameterInterface
         ValidationFailedException::throwException($violations);
 
         return $value;
-    }
-
-    public function getType(): InputType
-    {
-        return $this->parameter->getType();
-    }
-
-    public function hasDefaultValue(): bool
-    {
-        return $this->parameter->hasDefaultValue();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDefaultValue()
-    {
-        return $this->parameter->getDefaultValue();
     }
 }

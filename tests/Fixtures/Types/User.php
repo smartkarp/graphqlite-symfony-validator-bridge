@@ -1,7 +1,7 @@
 <?php
 
-
 namespace TheCodingMachine\GraphQLite\Validator\Fixtures\Types;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
@@ -16,13 +16,14 @@ class User
      *     message = "The email '{{ value }}' is not a valid email."
      * )
      */
-    private $email;
+    private string $email;
 
     /**
-     * The NotCompromisedPassword assertion asks the "HaveIBeenPawned" service if your password has already leaked or not.
+     * The NotCompromisedPassword assertion asks the "HaveIBeenPawned" service if your password has already leaked or
+     * not.
      * @Assert\Length(min=8)
      */
-    private $password;
+    private string $password;
 
     public function __construct(string $email, string $password)
     {

@@ -8,11 +8,10 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class ValidationFailedExceptionTest extends TestCase
 {
-
-    public function testGetExceptions()
+    public function testGetExceptions(): void
     {
         $constraintViolationList = new ConstraintViolationList([
-            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue')
+            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue'),
         ]);
 
         $validationFailedException = new ValidationFailedException($constraintViolationList);
@@ -24,14 +23,14 @@ class ValidationFailedExceptionTest extends TestCase
         $this->assertSame('foo', $exceptions[0]->getMessage());
     }
 
-    public function testThrowException()
+    public function testThrowException(): void
     {
         $constraintViolationList = new ConstraintViolationList([]);
 
         ValidationFailedException::throwException($constraintViolationList);
 
         $constraintViolationList = new ConstraintViolationList([
-            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue')
+            new ConstraintViolation('foo', 'foo {bar}', ['bar' => 'baz'], null, null, 'invalidValue'),
         ]);
 
         $this->expectException(ValidationFailedException::class);

@@ -15,6 +15,9 @@ class InvalidAssertionAnnotationException extends Exception
         $className = $class ? $class->getName() : '';
         $method = $refParameter->getDeclaringFunction()->getName();
 
-        return new self('In method ' . $className . '::' . $method . '(), the @Assert annotation is targeting parameter "$' . $refParameter->getName() . '". You cannot target this parameter because it is not part of the GraphQL Input type. You can only assert parameters coming from the end user.');
+        return new self(
+            'In method '.$className.'::'.$method.'(), the @Assert annotation is targeting parameter "$'.$refParameter->getName(
+            ).'". You cannot target this parameter because it is not part of the GraphQL Input type. You can only assert parameters coming from the end user.'
+        );
     }
 }

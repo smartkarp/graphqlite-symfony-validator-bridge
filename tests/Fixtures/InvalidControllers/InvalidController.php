@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TheCodingMachine\GraphQLite\Validator\Fixtures\InvalidControllers;
-
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Symfony\Component\Validator\Constraints as Assert;
